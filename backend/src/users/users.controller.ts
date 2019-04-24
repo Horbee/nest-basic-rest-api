@@ -1,20 +1,12 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Delete,
-  Put,
-  HttpException,
-  NotFoundException,
-  UseGuards,
-} from '@nestjs/common';
-import { UsersService } from './users.service';
-import { User } from './interfaces/user.interface';
-import { CreateUserDto } from './dto/create-user.dto';
-import { CreateUserResponse } from './interfaces/create-response.interface';
-import { AuthGuard } from '@nestjs/passport';
+    Body, Controller, Delete, Get, HttpException, NotFoundException, Param, Post, Put, UseGuards
+} from "@nestjs/common";
+import { AuthGuard } from "@nestjs/passport";
+
+import { CreateUserDto } from "./dto/create-user.dto";
+import { CreateUserResponse } from "./interfaces/create-response.interface";
+import { IUser } from "./interfaces/user.interface";
+import { UsersService } from "./users.service";
 
 @Controller('users')
 export class UsersController {
@@ -22,13 +14,13 @@ export class UsersController {
 
   @Get()
   @UseGuards(AuthGuard())
-  findAll(): Promise<User[]> {
+  findAll(): Promise<IUser[]> {
     return this.usersService.findAll();
   }
 
   @Get(':id')
   @UseGuards(AuthGuard())
-  async findOne(@Param('id') id): Promise<User> {
+  async findOne(@Param('id') id): Promise<IUser> {
     const user = await this.usersService.findOne(id);
     if (user) return user;
     else throw new NotFoundException();
@@ -43,7 +35,7 @@ export class UsersController {
 
   @Delete(':id')
   @UseGuards(AuthGuard())
-  deleteOne(@Param('id') id): Promise<User> {
+  deleteOne(@Param('id') id): Promise<IUser> {
     return this.usersService.delete(id);
   }
 
@@ -52,7 +44,7 @@ export class UsersController {
   updateOne(
     @Param('id') id,
     @Body() updateUserDto: CreateUserDto,
-  ): Promise<User> {
+  ): Promise<IUser> {
     return this.usersService.update(id, updateUserDto);
   }
 }

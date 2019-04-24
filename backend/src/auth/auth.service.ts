@@ -1,8 +1,10 @@
-import { JwtService } from '@nestjs/jwt';
-import { Injectable } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
-import { JWTPayload } from './interfaces/jwt-payload.interface';
-import { User } from 'src/users/interfaces/user.interface';
+import { IUser } from "src/users/interfaces/user.interface";
+
+import { Injectable } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
+
+import { UsersService } from "../users/users.service";
+import { JWTPayload } from "./interfaces/jwt-payload.interface";
 
 @Injectable()
 export class AuthService {
@@ -18,7 +20,7 @@ export class AuthService {
     return this.jwtService.sign(payload);
   }
 
-  async validateUser(payload: JWTPayload): Promise<User> {
+  async validateUser(payload: JWTPayload): Promise<IUser> {
     return await this.usersService.findOneByEmail(payload.username);
   }
 }
