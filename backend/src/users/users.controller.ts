@@ -1,6 +1,9 @@
+import { Request } from 'express';
+import { Usr } from 'src/auth/decorators/user.decorator';
+
 import {
-    Body, ClassSerializerInterceptor, Controller, Delete, Get, HttpException, NotFoundException,
-    Param, Post, Put, UseGuards, UseInterceptors
+    Body, ClassSerializerInterceptor, Controller, Delete, ForbiddenException, Get, HttpException,
+    HttpStatus, NotFoundException, Param, Post, Put, Req, UseGuards, UseInterceptors
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -13,6 +16,7 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  // GET all users
   @Get()
   @UseGuards(AuthGuard())
   @UseInterceptors(ClassSerializerInterceptor)
@@ -20,6 +24,7 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
+  // GET one user by id
   @Get(':id')
   @UseGuards(AuthGuard())
   @UseInterceptors(ClassSerializerInterceptor)
@@ -29,6 +34,7 @@ export class UsersController {
     else throw new NotFoundException();
   }
 
+  // CREATE user
   @Post()
   async create(@Body() userDto: CreateUserDto): Promise<CreateUserResponse> {
     const result = await this.usersService.create(userDto);
@@ -36,20 +42,25 @@ export class UsersController {
     throw new HttpException(result, 400);
   }
 
+  // DELETE user by id
   @Delete(':id')
   @UseGuards(AuthGuard())
   @UseInterceptors(ClassSerializerInterceptor)
-  deleteOne(@Param('id') id): Promise<IUser> {
-    return this.usersService.delete(id);
+  deleteOne(@Param('id') id, @Usr() user: IUser) {
+    if (user.id === id) return this.usersService.delete(id);
+    throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
   }
 
+  // UPDATE user by id
   @Put(':id')
   @UseGuards(AuthGuard())
   @UseInterceptors(ClassSerializerInterceptor)
   updateOne(
     @Param('id') id,
     @Body() updateUserDto: CreateUserDto,
-  ): Promise<IUser> {
-    return this.usersService.update(id, updateUserDto);
+    @Usr() user: IUser,
+  ) {
+    if (user.id === id) return this.usersService.update(id, updateUserDto);
+    throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
   }
 }
