@@ -47,8 +47,8 @@ export class UsersController {
   @UseGuards(AuthGuard())
   @UseInterceptors(ClassSerializerInterceptor)
   deleteOne(@Param('id') id, @Usr() user: IUser) {
-    if (user.id === id) return this.usersService.delete(id);
-    throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+    if (user.id === Number(id)) return this.usersService.delete(id);
+    throw new ForbiddenException();
   }
 
   // UPDATE user by id
@@ -60,7 +60,9 @@ export class UsersController {
     @Body() updateUserDto: CreateUserDto,
     @Usr() user: IUser,
   ) {
-    if (user.id === id) return this.usersService.update(id, updateUserDto);
-    throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+    if (user.id === Number(id)) {
+      return this.usersService.update(id, updateUserDto);
+    }
+    throw new ForbiddenException();
   }
 }
