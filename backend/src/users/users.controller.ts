@@ -1,8 +1,8 @@
 import {
-    Body, Controller, Delete, Get, HttpException, NotFoundException, Param, Post, Put, UseGuards
+    Body, ClassSerializerInterceptor, Controller, Delete, Get, HttpException, NotFoundException,
+    Param, Post, Put, UseGuards, UseInterceptors
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth } from '@nestjs/swagger';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { CreateUserResponse } from './interfaces/create-response.interface';
@@ -15,12 +15,14 @@ export class UsersController {
 
   @Get()
   @UseGuards(AuthGuard())
+  @UseInterceptors(ClassSerializerInterceptor)
   findAll(): Promise<IUser[]> {
     return this.usersService.findAll();
   }
 
   @Get(':id')
   @UseGuards(AuthGuard())
+  @UseInterceptors(ClassSerializerInterceptor)
   async findOne(@Param('id') id): Promise<IUser> {
     const user = await this.usersService.findOne(id);
     if (user) return user;
@@ -36,12 +38,14 @@ export class UsersController {
 
   @Delete(':id')
   @UseGuards(AuthGuard())
+  @UseInterceptors(ClassSerializerInterceptor)
   deleteOne(@Param('id') id): Promise<IUser> {
     return this.usersService.delete(id);
   }
 
   @Put(':id')
   @UseGuards(AuthGuard())
+  @UseInterceptors(ClassSerializerInterceptor)
   updateOne(
     @Param('id') id,
     @Body() updateUserDto: CreateUserDto,

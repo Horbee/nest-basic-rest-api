@@ -1,14 +1,14 @@
-import * as bcrypt from "bcryptjs";
-import { Model } from "mongoose";
-import { Repository } from "typeorm";
+import * as bcrypt from 'bcryptjs';
+import { Model } from 'mongoose';
+import { Repository } from 'typeorm';
 
-import { Injectable } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-import { InjectRepository } from "@nestjs/typeorm";
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { User } from "./entity/user.entity";
-import { CreateUserResponse } from "./interfaces/create-response.interface";
-import { IUser } from "./interfaces/user.interface";
+import { User } from './entity/user.entity';
+import { CreateUserResponse } from './interfaces/create-response.interface';
+import { IUser } from './interfaces/user.interface';
 
 @Injectable()
 export class UsersService {
@@ -23,7 +23,7 @@ export class UsersService {
     return await this.userRepository.find();
   }
 
-  async findOne(id: string): Promise<IUser> {
+  async findOne(id: number): Promise<IUser> {
     // return await this.userModel.findById(id);
     return await this.userRepository.findOne(id);
   }
@@ -42,9 +42,10 @@ export class UsersService {
       return { error: true, email: 'This email is already taken.' };
     } else {
       // const createUser = new this.userModel(newUser);
-      const createUser = new User();
-      createUser.username = newUser.username;
-      createUser.password = newUser.password;
+      const createUser = new User({
+        username: newUser.username,
+        password: newUser.password,
+      });
 
       bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(createUser.password, salt, async (hashErr, hash) => {
