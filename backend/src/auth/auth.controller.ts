@@ -1,8 +1,11 @@
-import { Controller, Post, Body, HttpException } from '@nestjs/common';
+import * as bcrypt from 'bcryptjs';
+
+import { Body, Controller, HttpException, Post } from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
+
+import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
-import * as bcrypt from 'bcryptjs';
-import { UsersService } from '../users/users.service';
 
 @Controller('login')
 export class AuthController {

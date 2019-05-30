@@ -1,12 +1,13 @@
 import {
     Body, Controller, Delete, Get, HttpException, NotFoundException, Param, Post, Put, UseGuards
-} from "@nestjs/common";
-import { AuthGuard } from "@nestjs/passport";
+} from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
-import { CreateUserDto } from "./dto/create-user.dto";
-import { CreateUserResponse } from "./interfaces/create-response.interface";
-import { IUser } from "./interfaces/user.interface";
-import { UsersService } from "./users.service";
+import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserResponse } from './interfaces/create-response.interface';
+import { IUser } from './interfaces/user.interface';
+import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {

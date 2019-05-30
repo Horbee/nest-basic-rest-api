@@ -1,7 +1,8 @@
-import { ValidationPipe } from "@nestjs/common";
-import { NestFactory } from "@nestjs/core";
+import { ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
-import { AppModule } from "./app.module";
+import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -9,9 +10,24 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
+      transform: true,
       // disableErrorMessages: true,
     }),
   );
+
+  const options = new DocumentBuilder()
+    .setTitle('Basic REST Api')
+    .setDescription('The Description of the API')
+    .setVersion('1.0')
+    .addTag('REST')
+    .build();
+
+  SwaggerModule.setup(
+    'swagger',
+    app,
+    SwaggerModule.createDocument(app, options),
+  );
+
   await app.listen(process.env.PORT || 3000);
 }
 bootstrap();
