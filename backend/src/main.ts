@@ -1,9 +1,12 @@
+import * as helmet from 'helmet';
+
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
 
+const rateLimit = require('express-rate-limit');
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors();
@@ -27,6 +30,15 @@ async function bootstrap() {
     app,
     SwaggerModule.createDocument(app, options),
   );
+
+  app.use(helmet());
+
+  const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+  });
+
+  app.use(limiter);
 
   await app.listen(process.env.PORT || 3000);
 }
